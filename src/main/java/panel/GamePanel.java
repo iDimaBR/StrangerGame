@@ -1,5 +1,6 @@
 package panel;
 
+import handler.Hitbox;
 import handler.KeyboardHandler;
 import manager.TileManager;
 import model.Character;
@@ -13,18 +14,24 @@ public class GamePanel extends JPanel implements Runnable {
     static final int scale = 3;
 
     public final int tileSize = originalTileSize * scale;
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 12;
+    public final int maxScreenCol = 16;
+    public final int maxScreenRow = 12;
+    public final int screenWidth = tileSize * maxScreenCol;
+    public final int screenHeight = tileSize * maxScreenRow;
 
-    final int screenWidth = tileSize * maxScreenCol;
-    final int screenHeight = tileSize * maxScreenRow;
+    public final int maxWorldCol = 50;
+    public final int maxWorldRow = 50;
+    public final int worldWidth = tileSize * maxWorldCol;
+    public final int worldHeight = tileSize * maxWorldRow;
+
+    public Hitbox hitbox = new Hitbox(this);
 
     int FPS = 60;
 
-    TileManager tileManager = new TileManager(this);
+    public TileManager tileManager = new TileManager(this);
     final KeyboardHandler keyboard = new KeyboardHandler();
     Thread thread;
-    Character player = new Character(this, keyboard);
+    public Character player = new Character(this, keyboard);
 
     public GamePanel() {
 
