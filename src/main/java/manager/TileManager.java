@@ -3,6 +3,8 @@ package manager;
 import model.Character;
 import model.Tile;
 import panel.GamePanel;
+import panel.StartPanel;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.*;
@@ -17,9 +19,11 @@ public class TileManager {
     public Tile[] tile;
     public int mapText[][];
 
+    public int level;
+
     public TileManager(GamePanel panel) {
         this.panel = panel;
-
+        this.level = 1;
         tile = new Tile[16];
         mapText = new int[panel.maxWorldCol][panel.maxWorldRow];
         getTileImage();
@@ -30,7 +34,7 @@ public class TileManager {
          int col = 0;
          int row = 0;
 
-         Path path = Paths.get("src/assets/maps/map-01.txt");
+         Path path = Paths.get("src/assets/maps/" + level + ".txt");
          try (Scanner scanner =  new Scanner(path, StandardCharsets.UTF_8.name())){
              while (scanner.hasNextLine()){
                  while(col < panel.maxWorldCol && row < panel.maxWorldRow){
@@ -53,7 +57,7 @@ public class TileManager {
                  }
              }
          } catch (IOException ex) {
-             throw new RuntimeException(ex);
+             panel.returnToStart();
          }
     }
 
@@ -77,6 +81,10 @@ public class TileManager {
             tile[4] = new Tile();
             tile[4].image = ImageIO.read(new File("src/assets/tiles/tree.png"));
             tile[4].collision = true;
+
+            tile[5] = new Tile();
+            tile[5].image = ImageIO.read(new File("src/assets/tiles/portal.png"));
+            tile[5].event = true;
         } catch (IOException e) {
             e.printStackTrace();
         }

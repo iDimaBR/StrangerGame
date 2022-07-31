@@ -5,7 +5,6 @@ import panel.GamePanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
@@ -44,6 +43,7 @@ public class Character extends Entity{
             down = ImageIO.read(new File("src/assets/down.png"));
             right = ImageIO.read(new File("src/assets/right.png"));
             left = ImageIO.read(new File("src/assets/left.png"));
+            actualImage = down;
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -55,6 +55,7 @@ public class Character extends Entity{
         else if (keyboard.down) direction = "down";
         else if (keyboard.left) direction = "left";
         else if (keyboard.right) direction = "right";
+        else direction = "";
 
         hitting = false;
         panel.hitbox.check(this);
@@ -62,31 +63,22 @@ public class Character extends Entity{
     }
 
     public void draw(Graphics2D g2){
-        //g2.setColor(Color.PINK);
-        //g2.fillRect(x, y, panel.tileSize, panel.tileSize);
-        //g2.dispose();
-
-        BufferedImage image = null;
-
         switch(direction){
             case "up":
-                image = up;
+                actualImage = up;
                 break;
             case "down":
-                image = down;
+                actualImage = down;
                 break;
             case "right":
-                image = right;
+                actualImage = right;
                 break;
             case "left":
-                image = left;
-                break;
-            default:
-                image = stop;
+                actualImage = left;
                 break;
         }
 
-        g2.drawImage(image, screenX, screenY, panel.tileSize, panel.tileSize, null);
+        g2.drawImage(actualImage, screenX, screenY, panel.tileSize, panel.tileSize, null);
     }
 
     private void move(){
@@ -103,6 +95,8 @@ public class Character extends Entity{
                     break;
                 case "left":
                     x -= speed;
+                    break;
+                default:
                     break;
             }
         }

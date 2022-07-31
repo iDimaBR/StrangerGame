@@ -1,5 +1,6 @@
 package handler;
 
+import manager.TileManager;
 import model.Entity;
 import panel.GamePanel;
 
@@ -32,6 +33,9 @@ public class Hitbox {
 
                 if(panel.tileManager.tile[tile1].collision || panel.tileManager.tile[tile2].collision)
                     entity.hitting = true;
+
+                if(panel.tileManager.tile[tile1].event || panel.tileManager.tile[tile2].event)
+                    nextLevel(panel);
                 break;
             case "down":
                 entityBottomRow = (entityBottomY + entity.speed)/panel.tileSize;
@@ -40,6 +44,9 @@ public class Hitbox {
 
                 if(panel.tileManager.tile[tile1].collision || panel.tileManager.tile[tile2].collision)
                     entity.hitting = true;
+
+                if(panel.tileManager.tile[tile1].event || panel.tileManager.tile[tile2].event)
+                    nextLevel(panel);
                 break;
             case "left":
                 entityLeftCol = (entityLeftX - entity.speed)/panel.tileSize;
@@ -48,6 +55,9 @@ public class Hitbox {
 
                 if(panel.tileManager.tile[tile1].collision || panel.tileManager.tile[tile2].collision)
                     entity.hitting = true;
+
+                if(panel.tileManager.tile[tile1].event || panel.tileManager.tile[tile2].event)
+                    nextLevel(panel);
                 break;
             case "right":
                 entityRightCol = (entityRightX + entity.speed)/panel.tileSize;
@@ -56,7 +66,17 @@ public class Hitbox {
 
                 if(panel.tileManager.tile[tile1].collision || panel.tileManager.tile[tile2].collision)
                     entity.hitting = true;
+
+                if(panel.tileManager.tile[tile1].event || panel.tileManager.tile[tile2].event)
+                    nextLevel(panel);
                 break;
         }
+    }
+
+    private void nextLevel(GamePanel panel){
+        final TileManager tileManager = panel.tileManager;
+        panel.player.setDefaulValues();
+        tileManager.level++;
+        tileManager.loadMap();
     }
 }

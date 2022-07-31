@@ -2,13 +2,17 @@ package panel;
 
 import handler.Hitbox;
 import handler.KeyboardHandler;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import manager.TileManager;
 import model.Character;
-
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class GamePanel extends JPanel implements Runnable {
+
+    JFrame frame;
 
     static final int originalTileSize = 16;
     static final int scale = 3;
@@ -26,25 +30,36 @@ public class GamePanel extends JPanel implements Runnable {
 
     public Hitbox hitbox = new Hitbox(this);
 
+    Thread thread;
     int FPS = 60;
 
     public TileManager tileManager = new TileManager(this);
     final KeyboardHandler keyboard = new KeyboardHandler();
-    Thread thread;
     public Character player = new Character(this, keyboard);
 
-    public GamePanel() {
+    // texts
 
+    Text textFPS;
+
+    public GamePanel(JFrame frame) {
+        this.frame = frame;
         this.setPreferredSize(new Dimension(screenWidth, screenHeight));
         this.setBackground(Color.BLACK);
         this.setDoubleBuffered(true);
         this.addKeyListener(keyboard);
         this.setFocusable(true);
+        this.setVisible(true);
+
+        this.thread = new Thread(this);
+        this.thread.start();
     }
 
-    public void startThread(){
-        thread = new Thread(this);
-        thread.start();
+    public void loadScreen(){
+        textFPS = new Text("FPS: 0");
+        textFPS.setFont(Font.font("Arial"));
+        textFPS.setFill(javafx.scene.paint.Color.WHITE);
+        textFPS.setX(0);
+        textFPS.setY(20);
     }
 
     @Override
@@ -57,22 +72,22 @@ public class GamePanel extends JPanel implements Runnable {
         long timer = 0;
         long drawCount = 0;
 
-        while(thread.isAlive()){
+        while(thread.isAlive()) {
 
             currentTime = System.nanoTime();
             timer += (currentTime - lastTime);
             delta += (currentTime - lastTime) / drawInterval;
             lastTime = currentTime;
 
-            if(delta >= 1){
+            if (delta >= 1) {
                 update();
                 repaint();
                 delta--;
                 drawCount++;
             }
 
-            if(timer >= 1000000000){
-                System.out.println("FPS: " + drawCount);
+            if (timer >= 1000000000) {
+                //textFPS.setText("FPS: " + drawCount);
                 drawCount = 0;
                 timer = 0;
             }
@@ -83,11 +98,24 @@ public class GamePanel extends JPanel implements Runnable {
         player.update();
     }
 
+    @Override
     public void paintComponent(Graphics graphics){
         super.paintComponent(graphics);
 
         final Graphics2D g2 = (Graphics2D) graphics;
         tileManager.draw(g2);
         player.draw(g2);
+    }
+
+    public void returnToStart() {
+        try {
+            StartPanel game = new StartPanel(frame);
+            game.setVisible(true);
+            frame.add(game);
+            frame.pack();
+            setVisible(false);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
